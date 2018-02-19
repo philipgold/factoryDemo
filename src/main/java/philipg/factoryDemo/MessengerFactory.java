@@ -1,23 +1,23 @@
 package philipg.factoryDemo;
 
-public class MessengerFactory extends BaseMessengerFactory {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    public Messenger sendMessage(MessengerTypes type) {
-        Messenger messenger;
-        switch (type)
-        {
-            case SMS:
-                messenger = new SMSMessenger();
-                break;
-            case EMAIL:
-                messenger = new EmailMessenger();
-                break;
-            case PIZZA:
-                messenger = new Pizza();
-                break;
-            default: throw new IllegalArgumentException("No such messenger.");
+import java.util.*;
+
+@Service
+public class MessengerFactory {
+    private static Map<Integer, Messenger> map = new HashMap<>();
+
+    @Autowired
+    public void configureMap(List<Messenger> messengers) {
+        for (Messenger messenger : messengers) {
+            map.put(messenger.getType(), messenger);
         }
+    }
 
+    public Messenger sendMessage(Message message) {
+        Messenger messenger = map.get(message.messageType);
         messenger.send();
         return messenger;
     }
